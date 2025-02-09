@@ -1,0 +1,23 @@
+server:
+  tomcat:
+    threads:
+      max: 200
+spring:
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/dropdown
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  application:
+    name: DropDownBackend
+  config:
+    import: file:src/main/resources/custom.yml
