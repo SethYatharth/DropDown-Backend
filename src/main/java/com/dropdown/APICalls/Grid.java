@@ -1,6 +1,7 @@
 package com.dropdown.APICalls;
 
 public interface Grid {
-    public String getGridAddress(Coordinates coordinates);
-    public Coordinates getCoordinatesFromGridAddress(String gridAddress);
+     String getGridAddress(Coordinates coordinates);
+     Coordinates getCoordinatesFromGridAddress(String gridAddress);
+
 }

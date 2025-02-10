@@ -13,7 +13,6 @@ public class NominatimService {
     private final RestTemplate restTemplate;
 
     public String getCityName(double latitude, double longitude) {
-        // Call the Nominatim API
         NominatimResponse response = restTemplate.getForObject(
                 NOMINATIM_URL,
                 NominatimResponse.class,

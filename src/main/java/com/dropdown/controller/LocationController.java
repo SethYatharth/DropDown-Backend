@@ -7,6 +7,7 @@ import com.dropdown.entity.GPSLocation;
 import com.dropdown.service.ServiceProviderService;
 import com.dropdown.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -22,11 +23,7 @@ public class LocationController {
     private final JwtService jwtService;
     private final UserService userService;
 
-//    @MessageMapping("/message")  // Client sends message to /app/message
-//    @SendTo("/topic/messages")  // Broadcast to all subscribers
-//    public String processMessage(String message) {
-//        return "Server received: " + message;
-//    }
+
 
     @MessageMapping("/update-location")
     public void updateLocation(@Payload WebSocketMessage message) {
@@ -61,6 +58,13 @@ public class LocationController {
                     BaseResponse.builder()
                             .response(newGPSLocation.getCellAddress())
                             .responseMessage("Find The List of ServiceProviders in Area " + newGPSLocation.getCellAddress())
+                            .build()
+            );
+            messagingTemplate.convertAndSend(
+                    "/location/"+newGPSLocation.getCellAddress(),
+                    BaseResponse.builder()
+                            .response(serviceProviderService.getServiceProvidersInArea(newGPSLocation.getCellAddress()))
+                            .responseMessage("List of ServiceProviders in Area " + newGPSLocation.getCellAddress())
                             .build()
             );
         }
