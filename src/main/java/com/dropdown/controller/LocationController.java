@@ -4,6 +4,8 @@ import com.dropdown.config.JwtService;
 import com.dropdown.dto.BaseResponse;
 import com.dropdown.dto.WebSocketMessage;
 import com.dropdown.entity.GPSLocation;
+import com.dropdown.exception.ServiceProviderException;
+import com.dropdown.exception.UserException;
 import com.dropdown.service.ServiceProviderService;
 import com.dropdown.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ public class LocationController {
 
 
     @MessageMapping("/update-location")
-    public void updateLocation(@Payload WebSocketMessage message) {
+    public void updateLocation(@Payload WebSocketMessage message) throws ServiceProviderException, UserException {
         System.out.println("WebSocketMessage: " + message);
 
         String email = jwtService.extractEmail(message.token());
@@ -38,7 +40,7 @@ public class LocationController {
             messagingTemplate.convertAndSend(
                     "/location/" + oldGPSLocation.getCellAddress(),
                     BaseResponse.builder()
-                            .response(serviceProviderService.getServiceProvidersInArea(oldGPSLocation.getCellAddress()))
+                            .response(serviceProviderService.getServiceProvidersInArea(oldGPSLocation))
                             .responseMessage("List of ServiceProviders in Area " + oldGPSLocation.getCellAddress())
                             .build()
             );
@@ -46,7 +48,7 @@ public class LocationController {
             messagingTemplate.convertAndSend(
                     "/location/"+newGPSLocation.getCellAddress(),
                     BaseResponse.builder()
-                            .response(serviceProviderService.getServiceProvidersInArea(newGPSLocation.getCellAddress()))
+                            .response(serviceProviderService.getServiceProvidersInArea(newGPSLocation))
                             .responseMessage("List of ServiceProviders in Area " + newGPSLocation.getCellAddress())
                             .build()
             );
@@ -63,7 +65,7 @@ public class LocationController {
             messagingTemplate.convertAndSend(
                     "/location/"+newGPSLocation.getCellAddress(),
                     BaseResponse.builder()
-                            .response(serviceProviderService.getServiceProvidersInArea(newGPSLocation.getCellAddress()))
+                            .response(serviceProviderService.getServiceProvidersInArea(newGPSLocation))
                             .responseMessage("List of ServiceProviders in Area " + newGPSLocation.getCellAddress())
                             .build()
             );

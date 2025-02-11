@@ -34,14 +34,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(new AuthChannelInterceptorAdapter());
     }
 
-    /***
-     * 🔹 When a User Updates Their Location
-     * 1️⃣ User sends WebSocket message to /app/update-location with JWT.
-     * 2️⃣ Server extracts username from JWT and finds their cellAddress.
-     * 3️⃣ Server sends a private message to /user/{token}/location-subscription with the cellAddress.
-     * 4️⃣ User subscribes to /location/{cellAddress} for real-time updates.
-     *
-     * 🔹 When a Service Provider Updates Location
-     * 1️⃣ All users subscribed to /location/{cellAddress} get the updated provider list instantly.
-     */
 }

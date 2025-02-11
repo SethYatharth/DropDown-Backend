@@ -21,14 +21,11 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-
     private String name;
-
     @Email
     @NotBlank
     @Column(unique = true,nullable = false)
     private String email;
-
     private String password;
 
     @Column(unique = true,nullable = false)

@@ -16,7 +16,7 @@ public class ServiceProviderDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return serviceProviderRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new UsernameNotFoundException(email+" Not Found"));
+        return serviceProviderRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new UsernameNotFoundException("Service Provider with "+email+" Not Found"));
     }
 
 }

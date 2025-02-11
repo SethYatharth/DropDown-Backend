@@ -12,6 +12,8 @@ import com.dropdown.entity.GPSLocation;
 import com.dropdown.entity.Role;
 import com.dropdown.entity.ServiceProvider;
 import com.dropdown.entity.User;
+import com.dropdown.exception.ServiceProviderException;
+import com.dropdown.exception.UserException;
 import com.dropdown.repository.ServiceProviderRepository;
 import com.dropdown.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -103,11 +105,11 @@ public class AuthService {
         }
     }
 
-    public BaseResponse login(LoginRequest request) {
+    public BaseResponse login(LoginRequest request) throws UserException, ServiceProviderException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         String cityName = nominatimService.getCityName(request.latitude(), request.longitude());
         if (request.role().equals("User")) {
-            User user = userRepository.findByEmailIgnoreCase(request.email()).orElseThrow(() -> new RuntimeException("User Not Found"));
+            User user = userRepository.findByEmailIgnoreCase(request.email()).orElseThrow(() -> new UserException("User Not Found with "+request.email()));
             if (!user.getCity().equals(cityName)) {
                 user.setCity(cityName);
                 user.setLocation(
@@ -129,7 +131,7 @@ public class AuthService {
                     .responseMessage(loginSuccess)
                     .build();
         } else if (request.role().equals("ServiceProvider")) {
-            ServiceProvider serviceProvider = serviceProviderRepository.findByEmailIgnoreCase(request.email()).orElseThrow(() -> new RuntimeException("Business Not Found"));
+            ServiceProvider serviceProvider = serviceProviderRepository.findByEmailIgnoreCase(request.email()).orElseThrow(() -> new ServiceProviderException("Service Provider Not Found with "+request.email()));
             if (!serviceProvider.getCity().equals(cityName)) {
                 serviceProvider.setCity(cityName);
                 serviceProvider.setLocation(
@@ -157,20 +159,20 @@ public class AuthService {
         }
     }
 
-    public BaseResponse refresh(String refreshToken) {
+    public BaseResponse refresh(String refreshToken) throws UserException, ServiceProviderException {
         if (jwtService.isTokenExpired(refreshToken)) {
             throw new RuntimeException(refreshTokenExpired);
         }
         String role = jwtService.extractRole(refreshToken);
         String email = jwtService.extractEmail(refreshToken);
         if (role.equals("USER")) {
-            User user = userRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new RuntimeException("User Not Found"));
+            User user = userRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new UserException("User Not Found"));
             return BaseResponse.builder()
                     .response(new AuthResponse(jwtService.generateToken(user), jwtService.generateRefreshToken(user)))
                     .responseMessage(loginSuccess)
                     .build();
         } else if (role.equals("SERVICE_PROVIDER")) {
-            ServiceProvider serviceProvider = serviceProviderRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new RuntimeException("Business Not Found"));
+            ServiceProvider serviceProvider = serviceProviderRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new ServiceProviderException("Service Provider Not Found"));
             return BaseResponse.builder()
                     .response(new AuthResponse(jwtService.generateToken(serviceProvider), jwtService.generateRefreshToken(serviceProvider)))
                     .responseMessage(loginSuccess)

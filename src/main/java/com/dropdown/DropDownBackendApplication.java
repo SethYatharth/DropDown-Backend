@@ -1,5 +1,6 @@
 package com.dropdown;
 
+import com.dropdown.entity.GPSLocation;
 import com.dropdown.entity.ServiceProviderDAO;
 import com.dropdown.service.ServiceProviderService;
 import org.springframework.boot.CommandLineRunner;
@@ -173,7 +174,11 @@ public class DropDownBackendApplication {
             ServiceProviderService serviceProviderService
     ) {
         return args -> {
-//            System.out.println(serviceProviderService.getServiceProvidersInArea("873d92922ffffff"));
+//            System.out.println(serviceProviderService.getServiceProvidersInArea(new GPSLocation(
+//                    22.7286,
+//                    75.8898,
+//                    "873d92926ffffff"
+//            )).size());
         };
     }
 

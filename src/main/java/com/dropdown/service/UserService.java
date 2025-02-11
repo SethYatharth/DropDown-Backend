@@ -6,6 +6,7 @@ import com.dropdown.APICalls.NominatimService;
 import com.dropdown.config.GetEntityFromToken;
 import com.dropdown.entity.GPSLocation;
 import com.dropdown.entity.User;
+import com.dropdown.exception.UserException;
 import com.dropdown.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,10 +21,10 @@ public class UserService {
     private final NominatimService nominatimService;
     private final H3UberGridService h3UberGridService;
 
-    public GPSLocation updateUserLocationAndGetLocation(String token, GPSLocation update) {
+    public GPSLocation updateUserLocationAndGetLocation(String token, GPSLocation update) throws UserException {
         User user = (User) entityFromToken.getEntityFromToken(token);
         if (user == null) {
-            throw new UsernameNotFoundException("");
+            throw new UserException("User not found");
         }
         String cityName = nominatimService.getCityName(update.getLatitude(), update.getLongitude());
         update.setCellAddress(

@@ -42,6 +42,10 @@ public class ServiceProvider implements UserDetails {
     @Column(unique = true,nullable = false)
     private String phoneNo;
 
+    private String vehicleType;
+    private String vehicleNo;
+    private String vehicleModel;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
     private Role role = Role.SERVICE_PROVIDER;
