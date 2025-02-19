@@ -1,6 +1,5 @@
 package com.dropdown.userDetailService;
 
-import com.dropdown.entity.ServiceProvider;
 import com.dropdown.repository.ServiceProviderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

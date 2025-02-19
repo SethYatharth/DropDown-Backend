@@ -148,6 +148,7 @@ public class AuthService {
                 );
                 serviceProviderRepository.save(serviceProvider);
             }
+            System.out.println(serviceProvider.getEmail());
             return BaseResponse.builder()
                     .response(new AuthResponse(jwtService.generateToken(serviceProvider), jwtService.generateRefreshToken(serviceProvider)))
                     .responseMessage(loginSuccess)
@@ -182,6 +183,13 @@ public class AuthService {
                     .responseMessage(loginFailed)
                     .build();
         }
+    }
+
+    public BaseResponse checkIsValid(String token) {
+        return BaseResponse.builder()
+                .response(!jwtService.isTokenExpired(token))
+                .responseMessage("Check Performed")
+                .build();
     }
 }
 

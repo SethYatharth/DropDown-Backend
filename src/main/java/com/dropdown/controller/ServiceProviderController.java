@@ -8,6 +8,7 @@ import com.dropdown.exception.ServiceProviderException;
 import com.dropdown.service.ServiceProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,6 +18,7 @@ public class ServiceProviderController {
 
     private final ServiceProviderService serviceProviderService;
 
+    @PreAuthorize("hasAuthority('SERVICE_PROVIDER')")
     @PutMapping("/vehicle-info")
     public ResponseEntity<BaseResponse> addVehicleInformation(@RequestBody VehicleDto vehicleDto,@RequestHeader("Authorization") String token) throws ServiceProviderException {
          return ResponseEntity.ok(serviceProviderService.vehicleInformation(vehicleDto,token));

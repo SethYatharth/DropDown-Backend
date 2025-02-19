@@ -7,6 +7,7 @@ import com.dropdown.exception.ServiceProviderException;
 import com.dropdown.exception.UserException;
 import com.dropdown.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<BaseResponse> register(@RequestBody RegistrationRequest registrationRequest) {
         return ResponseEntity.ok(authService.register(registrationRequest));
+    }
+
+    @GetMapping("/{token}")
+    public ResponseEntity<BaseResponse> isValid(@PathVariable String token) {
+        return new ResponseEntity<>(authService.checkIsValid(token), HttpStatus.OK);
     }
 
     @PostMapping("/login")

@@ -61,11 +61,29 @@ public interface ServiceProviderRepository extends JpaRepository<ServiceProvider
                 from service_provider
             where 
                 cell_address = :cellAddress
+            """,nativeQuery = true)
+    List<ServiceProviderDAO> findAllByCellAddress(String cellAddress);
+
+
+
+    @Query(value = """
+            SELECT
+                id,
+                            name,
+                            email,
+                            phone_no,
+                            vehicle_type,
+                            vehicle_no,
+                            vehicle_model,
+                            latitude,
+                            longitude
+                from service_provider
+            where 
+                cell_address = :cellAddress
                         and 
                             city = :city
             """,nativeQuery = true)
-    List<ServiceProviderDAO> findAllByCellAddress(String cellAddress,String city);
-
+    List<ServiceProviderDAO> findAllByCellAddressAndCity(String cellAddress,String city);
 
 
 }

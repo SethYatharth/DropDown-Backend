@@ -11,14 +11,13 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-@Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-location")  // WebSocket endpoint
                 .setAllowedOriginPatterns("*")// Allow all origins (change for security)
-                .setAllowedOrigins("localhost")
+                .setAllowedOrigins("192.168.5.214")
                 .withSockJS(); // Enable SockJS fallback
     }
 
@@ -29,9 +28,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setUserDestinationPrefix("/user");
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new AuthChannelInterceptorAdapter());
-    }
 
 }

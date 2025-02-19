@@ -69,7 +69,10 @@ public class ServiceProviderService {
 
     public List<ServiceProviderDAO> getServiceProvidersInArea(GPSLocation location) {
         String cityName = nominatimService.getCityName(location.getLatitude(), location.getLongitude());
-        return serviceProviderRepository.findAllByCellAddress(location.getCellAddress(),cityName);
+        if (cityName == "City not found") {
+            return serviceProviderRepository.findAllByCellAddress(location.getCellAddress());
+        }
+        return serviceProviderRepository.findAllByCellAddressAndCity(location.getCellAddress(),cityName);
     }
 
     public GPSLocation getServiceProviderLocation(String token) throws ServiceProviderException {

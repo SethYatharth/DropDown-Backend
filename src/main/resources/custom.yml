@@ -14,4 +14,4 @@ auth:
     login:  Login Successful
   failure:
     registration: Registration Failed, please try again
-    login: Registration Failed, please try again
+    login: Login Failed, please try again
