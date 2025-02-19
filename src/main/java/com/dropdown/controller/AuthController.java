@@ -24,7 +24,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(registrationRequest));
     }
 
-    @GetMapping("/{token}")
+    @GetMapping("/valid/{token}")
     public ResponseEntity<BaseResponse> isValid(@PathVariable String token) {
         return new ResponseEntity<>(authService.checkIsValid(token), HttpStatus.OK);
     }
