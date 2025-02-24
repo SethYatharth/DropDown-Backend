@@ -24,7 +24,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(registrationRequest));
     }
 
-    @GetMapping("/{token}")
+    @GetMapping("/valid/{token}")
     public ResponseEntity<BaseResponse> isValid(@PathVariable String token) {
         return new ResponseEntity<>(authService.checkIsValid(token), HttpStatus.OK);
     }
@@ -36,7 +36,6 @@ public class AuthController {
 
     @GetMapping("/{refreshToken}")
     public ResponseEntity<BaseResponse> refresh(@PathVariable String refreshToken) throws ServiceProviderException, UserException {
-        System.out.println(refreshToken);
         return ResponseEntity.ok(authService.refresh(refreshToken));
     }
 
