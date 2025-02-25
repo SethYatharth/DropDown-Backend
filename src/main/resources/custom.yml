@@ -15,3 +15,7 @@ auth:
   failure:
     registration: Registration Failed, please try again
     login: Login Failed, please try again
+cors:
+  user:
+    host: 192.168.5.196
+    port: 8081

@@ -12,35 +12,26 @@ import com.dropdown.entity.ServiceProviderDAO;
 import com.dropdown.exception.ServiceProviderException;
 import com.dropdown.repository.ServiceProviderRepository;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class ServiceProviderService {
 
     private final ServiceProviderRepository serviceProviderRepository;
     private final GetEntityFromToken entityFromToken;
     private final NominatimService nominatimService;
     private final H3UberGridService h3UberGridService;
+    private final OnlineServiceCache onlineServiceCache;
 
-    @Autowired
-    public ServiceProviderService(
-            ServiceProviderRepository serviceProviderRepository,
-            GetEntityFromToken entityFromToken,
-            NominatimService nominatimService,
-            H3UberGridService h3UberGridService
-    ) {
-
-        this.serviceProviderRepository = serviceProviderRepository;
-        this.entityFromToken = entityFromToken;
-        this.nominatimService = nominatimService;
-        this.h3UberGridService = h3UberGridService;
-    }
 
     public GPSLocation updateServiceProviderLocationAndGetLocation(String token, GPSLocation update) throws ServiceProviderException {
         ServiceProvider provider = (ServiceProvider) entityFromToken.getEntityFromToken(token);
@@ -69,10 +60,15 @@ public class ServiceProviderService {
 
     public List<ServiceProviderDAO> getServiceProvidersInArea(GPSLocation location) {
         String cityName = nominatimService.getCityName(location.getLatitude(), location.getLongitude());
-        if (cityName == "City not found") {
-            return serviceProviderRepository.findAllByCellAddress(location.getCellAddress());
-        }
-        return serviceProviderRepository.findAllByCellAddressAndCity(location.getCellAddress(),cityName);
+        List<ServiceProviderDAO> serviceProviderDAOS ;
+        if (cityName == "City not found")
+            serviceProviderDAOS = serviceProviderRepository.findAllByCellAddress(location.getCellAddress());
+        else
+            serviceProviderDAOS =  serviceProviderRepository.findAllByCellAddressAndCity(location.getCellAddress(),cityName);
+
+        return serviceProviderDAOS.stream()
+                .filter(provider -> onlineServiceCache.isOnline(provider.getEmail()))
+                .collect(Collectors.toList());
     }
 
     public GPSLocation getServiceProviderLocation(String token) throws ServiceProviderException {

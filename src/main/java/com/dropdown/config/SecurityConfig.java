@@ -1,13 +1,8 @@
 package com.dropdown.config;
 
 
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +25,13 @@ import java.util.Collections;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    @Value("${cors.user.host}")
+    private String CORS_ALLOWED_HOST;
+
+    @Value("${cors.user.port}")
+    private String CORS_ALLOWED_PORT;
+
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationManager authenticationManager;
@@ -57,7 +59,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("http://192.168.5.196:8081")); // Allow all origins
+        configuration.setAllowedOrigins(Collections.singletonList("http://"+ CORS_ALLOWED_HOST +":"+ CORS_ALLOWED_PORT)); // Allow all origins
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);

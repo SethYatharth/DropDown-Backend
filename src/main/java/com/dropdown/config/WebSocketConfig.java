@@ -1,5 +1,6 @@
 package com.dropdown.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -13,11 +14,14 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    @Value("${cors.user.host}")
+    private String CORS_ALLOWED_HOST;
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-location")  // WebSocket endpoint
                 .setAllowedOriginPatterns("*")// Allow all origins (change for security)
-                .setAllowedOrigins("192.168.5.196")
+                .setAllowedOrigins(CORS_ALLOWED_HOST)
                 .withSockJS(); // Enable SockJS fallback
     }
 

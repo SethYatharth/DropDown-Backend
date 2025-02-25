@@ -6,10 +6,10 @@ import com.dropdown.dto.WebSocketMessage;
 import com.dropdown.entity.GPSLocation;
 import com.dropdown.exception.ServiceProviderException;
 import com.dropdown.exception.UserException;
+import com.dropdown.service.OnlineServiceCache;
 import com.dropdown.service.ServiceProviderService;
 import com.dropdown.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -24,7 +24,7 @@ public class LocationController {
     private final SimpMessagingTemplate messagingTemplate;
     private final JwtService jwtService;
     private final UserService userService;
-
+    private final OnlineServiceCache onlineServiceCache;
 
 
     @MessageMapping("/update-location")
@@ -71,6 +71,13 @@ public class LocationController {
             );
         }
     }
+
+    @MessageMapping("/h")
+    public void heartBeat(@Payload String token){
+        onlineServiceCache.online(token);
+    }
+
+
 }
 
 

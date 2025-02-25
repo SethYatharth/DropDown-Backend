@@ -1,22 +1,24 @@
 package com.dropdown;
 
-import com.dropdown.entity.GPSLocation;
-import com.dropdown.entity.ServiceProviderDAO;
-import com.dropdown.service.ServiceProviderService;
+import com.dropdown.service.CacheService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.util.List;
+import java.time.LocalDateTime;
+
 
 @SpringBootApplication
+@EnableCaching
+@EnableScheduling
 public class DropDownBackendApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(DropDownBackendApplication.class, args);
     }
-
 //    @Bean
 //    public CommandLineRunner commandLineRunner(UserRepository userRepository,
 //                                               ServiceProviderRepository serviceProviderRepository,
@@ -168,18 +170,5 @@ public class DropDownBackendApplication {
 //        };
 //
 //    }
-
-    @Bean
-    public CommandLineRunner commandLineRunner(
-            ServiceProviderService serviceProviderService
-    ) {
-        return args -> {
-//            System.out.println(serviceProviderService.getServiceProvidersInArea(new GPSLocation(
-//                    22.7286,
-//                    75.8898,
-//                    "873d92926ffffff"
-//            )).size());
-        };
-    }
 
 }
