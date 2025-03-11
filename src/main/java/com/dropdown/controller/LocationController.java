@@ -12,7 +12,10 @@ import com.dropdown.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpSubscription;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Controller;
 
 
@@ -25,10 +28,8 @@ public class LocationController {
     private final JwtService jwtService;
     private final UserService userService;
     private final OnlineServiceCache onlineServiceCache;
-
-
     @MessageMapping("/update-location")
-    public void updateLocation(@Payload WebSocketMessage message) throws ServiceProviderException, UserException {
+    public void updateLocation(@Payload WebSocketMessage message) throws ServiceProviderException, UserException, InterruptedException {
         System.out.println("WebSocketMessage: " + message);
 
         String email = jwtService.extractEmail(message.token());
@@ -54,14 +55,15 @@ public class LocationController {
             );
         } else if (role.equals("USER")) {
             GPSLocation newGPSLocation = userService.updateUserLocationAndGetLocation(message.token(), message.location());
-            messagingTemplate.convertAndSendToUser(
-                    email,
-                    "/location-sub",
-                    BaseResponse.builder()
-                            .response(newGPSLocation.getCellAddress())
-                            .responseMessage("Find The List of ServiceProviders in Area " + newGPSLocation.getCellAddress())
-                            .build()
-            );
+//            messagingTemplate.convertAndSendToUser(
+//                    email,
+//                    "/location-sub",
+//                    BaseResponse.builder()
+//                            .response(newGPSLocation.getCellAddress())
+//                            .responseMessage("Find The List of ServiceProviders in Area " + newGPSLocation.getCellAddress())
+//                            .build()
+//            );
+//            Thread.sleep(1000);
             messagingTemplate.convertAndSend(
                     "/location/"+newGPSLocation.getCellAddress(),
                     BaseResponse.builder()
@@ -76,8 +78,6 @@ public class LocationController {
     public void heartBeat(@Payload String token){
         onlineServiceCache.online(token);
     }
-
-
 }
 
 

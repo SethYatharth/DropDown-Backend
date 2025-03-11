@@ -32,4 +32,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exceptionMessage, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(RideException.class)
+    public ResponseEntity<ExceptionMessage> handleRideException(RideException e, WebRequest request) {
+        ExceptionMessage exceptionMessage = new ExceptionMessage(e.getMessage(),request.getDescription(false), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionMessage, HttpStatus.NOT_FOUND);
+    }
+
 }

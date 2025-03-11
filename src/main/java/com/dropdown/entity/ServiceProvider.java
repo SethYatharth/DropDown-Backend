@@ -1,6 +1,7 @@
 package com.dropdown.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -21,7 +22,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(indexes = {@Index(name = "idx_city", columnList = "city")})
 public class ServiceProvider implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -36,9 +36,6 @@ public class ServiceProvider implements UserDetails {
 
     private String password;
 
-    @Column(nullable = false)
-    private String city;
-
     @Column(unique = true,nullable = false)
     private String phoneNo;
 
@@ -52,6 +49,10 @@ public class ServiceProvider implements UserDetails {
 
     @Embedded
     private GPSLocation location;
+
+    @OneToMany(mappedBy = "serviceProvider")
+    @JsonIgnoreProperties("serviceProvider")
+    private List<Ride> rides;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

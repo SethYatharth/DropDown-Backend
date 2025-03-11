@@ -1,5 +1,7 @@
 package com.dropdown.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(indexes = {@Index(name = "idx_city", columnList = "city")})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,8 +36,10 @@ public class User implements UserDetails {
     @Column(nullable = false, updatable = false)
     private Role role = Role.USER;
 
-    @Column(nullable = false)
-    private String city;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
+    private List<Ride> rides;
 
     @Embedded
     private GPSLocation location;

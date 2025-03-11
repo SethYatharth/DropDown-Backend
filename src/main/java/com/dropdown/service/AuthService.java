@@ -2,7 +2,6 @@ package com.dropdown.service;
 
 import com.dropdown.APICalls.Coordinates;
 import com.dropdown.APICalls.H3UberGridService;
-import com.dropdown.APICalls.NominatimService;
 import com.dropdown.config.JwtService;
 import com.dropdown.dto.AuthResponse;
 import com.dropdown.dto.BaseResponse;
@@ -32,7 +31,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final ServiceProviderRepository serviceProviderRepository;
-    private final NominatimService nominatimService;
     private final H3UberGridService h3UberGridService;
 
     @Value("${auth.success.registration}")
@@ -66,7 +64,6 @@ public class AuthService {
                                     )
                             )
                     )
-                    .city(nominatimService.getCityName(request.latitude(), request.longitude()))
                     .build();
             userRepository.save(user);
             return BaseResponse.builder()
@@ -91,7 +88,6 @@ public class AuthService {
                                     )
                             )
                     )
-                    .city(nominatimService.getCityName(request.latitude(), request.longitude()))
                     .build();
             serviceProviderRepository.save(business);
             return BaseResponse.builder()
@@ -107,12 +103,10 @@ public class AuthService {
 
     public BaseResponse login(LoginRequest request) throws UserException, ServiceProviderException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-        String cityName = nominatimService.getCityName(request.latitude(), request.longitude());
         if (request.role().equals("User")) {
             User user = userRepository.findByEmailIgnoreCase(request.email()).orElseThrow(() -> new UserException("User Not Found with "+request.email()));
-            if (!user.getCity().equals(cityName)) {
-                user.setCity(cityName);
-                user.setLocation(
+
+            user.setLocation(
                         new GPSLocation(
                                 request.latitude(),
                                 request.longitude(),
@@ -125,15 +119,13 @@ public class AuthService {
                         )
                 );
                 userRepository.save(user);
-            }
+
             return BaseResponse.builder()
                     .response(new AuthResponse(jwtService.generateToken(user), jwtService.generateRefreshToken(user)))
                     .responseMessage(loginSuccess)
                     .build();
         } else if (request.role().equals("ServiceProvider")) {
             ServiceProvider serviceProvider = serviceProviderRepository.findByEmailIgnoreCase(request.email()).orElseThrow(() -> new ServiceProviderException("Service Provider Not Found with "+request.email()));
-            if (!serviceProvider.getCity().equals(cityName)) {
-                serviceProvider.setCity(cityName);
                 serviceProvider.setLocation(
                         new GPSLocation(
                                 request.latitude(),
@@ -147,7 +139,7 @@ public class AuthService {
                         )
                 );
                 serviceProviderRepository.save(serviceProvider);
-            }
+
             System.out.println(serviceProvider.getEmail());
             return BaseResponse.builder()
                     .response(new AuthResponse(jwtService.generateToken(serviceProvider), jwtService.generateRefreshToken(serviceProvider)))

@@ -1,14 +1,10 @@
 package com.dropdown;
 
-import com.dropdown.service.CacheService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.time.LocalDateTime;
 
 
 @SpringBootApplication
@@ -23,8 +19,7 @@ public class DropDownBackendApplication {
 //    public CommandLineRunner commandLineRunner(UserRepository userRepository,
 //                                               ServiceProviderRepository serviceProviderRepository,
 //                                               PasswordEncoder passwordEncoder,
-//                                               H3UberGridService h3UberGridService,
-//                                               NominatimService nominatimService) {
+//                                               H3UberGridService h3UberGridService) {
 //        return args -> {
 //            Faker faker = new Faker();
 //
@@ -157,7 +152,6 @@ public class DropDownBackendApplication {
 //                                .password(passwordEncoder.encode(faker.internet().password()))
 //                                .phoneNo(faker.phoneNumber().cellPhone())
 //                                .role(Role.SERVICE_PROVIDER)
-//                                .city(nominatimService.getCityName(indoreServiceProviderLocations.get(i).lat, indoreServiceProviderLocations.get(i).lon))
 //                                .location(new GPSLocation(
 //                                        indoreUserLocation.get(i).lat,
 //                                        indoreUserLocation.get(i).lon,
@@ -170,5 +164,4 @@ public class DropDownBackendApplication {
 //        };
 //
 //    }
-
 }

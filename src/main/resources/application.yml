@@ -20,4 +20,4 @@ spring:
   application:
     name: DropDownBackend
   config:
-    import: file:src/main/resources/custom.yml
+    import: optional:file:src/main/resources/custom.yml
