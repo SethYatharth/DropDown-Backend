@@ -1,10 +1,8 @@
 package com.dropdown.config;
 
 
-import com.dropdown.entity.User;
 import com.dropdown.repository.ServiceProviderRepository;
 import com.dropdown.repository.UserRepository;
-import com.dropdown.userDetailService.ServiceProviderDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +22,7 @@ public class GetEntityFromToken {
         if (role.equals("USER")) {
             return userRepository.findByEmailIgnoreCase(email).orElseThrow(()->new UsernameNotFoundException(email+" not found"));
         }
-        if (role.equals("BUSINESS")) {
+        if (role.equals("SERVICE_PROVIDER")) {
             return serviceProviderRepository.findByEmailIgnoreCase(email).orElseThrow(()->new UsernameNotFoundException(email+" not found"));
         }
         return null;

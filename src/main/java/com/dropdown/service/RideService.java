@@ -15,8 +15,6 @@ import com.dropdown.mapper.RideMapper;
 import com.dropdown.repository.RideRepository;
 import com.dropdown.repository.ServiceProviderRepository;
 import com.dropdown.repository.UserRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -33,10 +31,6 @@ public class RideService {
     private final ServiceProviderRepository serviceProviderRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final RideMapper rideMapper;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
     public boolean createRideRequest(RideRequestByCustomer request, String token) throws ServiceProviderException, UserException {
         if (request.serviceProviderId() == null) {
             throw new ServiceProviderException("ServiceProvider Id no found in request");
