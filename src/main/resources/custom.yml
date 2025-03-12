@@ -14,5 +14,5 @@ auth:
     login: Login Failed, please try again
 cors:
   user:
-    host: 192.168.5.216
-    port: 8081
+    host: localhost
+    port: 3000

@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,13 +67,15 @@ public class AuthService {
                             )
                     )
                     .build();
-            userRepository.save(user);
+            User user1 = userRepository.save(user);
+            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+            SecurityContextHolder.getContext().setAuthentication(authenticate);
             return BaseResponse.builder()
-                    .response(new AuthResponse(jwtService.generateToken(user), jwtService.generateRefreshToken(user)))
+                    .response(new AuthResponse(user1.getId(),jwtService.generateToken(user), jwtService.generateRefreshToken(user)))
                     .responseMessage(registrationSuccess)
                     .build();
         } else if (request.role().equals("ServiceProvider")) {
-            var business = ServiceProvider.builder()
+            var serviceProvider = ServiceProvider.builder()
                     .name(request.name())
                     .email(request.email())
                     .password(passwordEncoder.encode(request.password()))
@@ -89,9 +93,11 @@ public class AuthService {
                             )
                     )
                     .build();
-            serviceProviderRepository.save(business);
+            ServiceProvider serviceProvider1 = serviceProviderRepository.save(serviceProvider);
+            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+            SecurityContextHolder.getContext().setAuthentication(authenticate);
             return BaseResponse.builder()
-                    .response(new AuthResponse(jwtService.generateToken(business), jwtService.generateRefreshToken(business)))
+                    .response(new AuthResponse(serviceProvider1.getId(),jwtService.generateToken(serviceProvider), jwtService.generateRefreshToken(serviceProvider)))
                     .responseMessage(registrationSuccess)
                     .build();
         } else {
@@ -102,7 +108,8 @@ public class AuthService {
     }
 
     public BaseResponse login(LoginRequest request) throws UserException, ServiceProviderException {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
         if (request.role().equals("User")) {
             User user = userRepository.findByEmailIgnoreCase(request.email()).orElseThrow(() -> new UserException("User Not Found with "+request.email()));
 
@@ -118,10 +125,10 @@ public class AuthService {
                                 )
                         )
                 );
-                userRepository.save(user);
+            User user1 = userRepository.save(user);
 
             return BaseResponse.builder()
-                    .response(new AuthResponse(jwtService.generateToken(user), jwtService.generateRefreshToken(user)))
+                    .response(new AuthResponse(user1.getId(),jwtService.generateToken(user), jwtService.generateRefreshToken(user)))
                     .responseMessage(loginSuccess)
                     .build();
         } else if (request.role().equals("ServiceProvider")) {
@@ -138,11 +145,11 @@ public class AuthService {
                                 )
                         )
                 );
-                serviceProviderRepository.save(serviceProvider);
+            ServiceProvider serviceProvider1 = serviceProviderRepository.save(serviceProvider);
 
             System.out.println(serviceProvider.getEmail());
             return BaseResponse.builder()
-                    .response(new AuthResponse(jwtService.generateToken(serviceProvider), jwtService.generateRefreshToken(serviceProvider)))
+                    .response(new AuthResponse(serviceProvider1.getId(),jwtService.generateToken(serviceProvider), jwtService.generateRefreshToken(serviceProvider)))
                     .responseMessage(loginSuccess)
                     .build();
         } else {
@@ -161,13 +168,13 @@ public class AuthService {
         if (role.equals("USER")) {
             User user = userRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new UserException("User Not Found"));
             return BaseResponse.builder()
-                    .response(new AuthResponse(jwtService.generateToken(user), jwtService.generateRefreshToken(user)))
+                    .response(new AuthResponse(user.getId(),jwtService.generateToken(user), jwtService.generateRefreshToken(user)))
                     .responseMessage(loginSuccess)
                     .build();
         } else if (role.equals("SERVICE_PROVIDER")) {
             ServiceProvider serviceProvider = serviceProviderRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new ServiceProviderException("Service Provider Not Found"));
             return BaseResponse.builder()
-                    .response(new AuthResponse(jwtService.generateToken(serviceProvider), jwtService.generateRefreshToken(serviceProvider)))
+                    .response(new AuthResponse(serviceProvider.getId(),jwtService.generateToken(serviceProvider), jwtService.generateRefreshToken(serviceProvider)))
                     .responseMessage(loginSuccess)
                     .build();
         } else {

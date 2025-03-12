@@ -17,6 +17,7 @@ import com.dropdown.repository.ServiceProviderRepository;
 import com.dropdown.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,6 +32,8 @@ public class RideService {
     private final ServiceProviderRepository serviceProviderRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final RideMapper rideMapper;
+    private final ServiceProviderService serviceProviderService;
+
     public boolean createRideRequest(RideRequestByCustomer request, String token) throws ServiceProviderException, UserException {
         if (request.serviceProviderId() == null) {
             throw new ServiceProviderException("ServiceProvider Id no found in request");
@@ -56,7 +59,7 @@ public class RideService {
         RideRequestToServiceProvider rideRequestToServiceProvider = rideMapper.rideRequestToServiceProvider(save, user, serviceProvider);
 
         // notification to specific service provider
-        messagingTemplate.convertAndSendToUser(serviceProvider.getEmail(), "/notification", rideRequestToServiceProvider);
+        messagingTemplate.convertAndSend("/notification/"+serviceProvider.getId(),rideRequestToServiceProvider);
         return true;
     }
 
@@ -69,7 +72,6 @@ public class RideService {
                 rideRepository.updateRideStatus(request.rideId(), RideStatus.ACCEPTED_BY_DRIVER);
             }
         }
-        // todo to initiate call if ride is accepted should i return service provider the info of driver or what should be done next
     }
 
     public Boolean checkStatus(String rideId, String token) throws ServiceProviderException, RideException {
@@ -80,5 +82,9 @@ public class RideService {
         }
         return true;
     }
+//    @Scheduled(fixedRate = 3000)
+//    public void send(){
+//        messagingTemplate.convertAndSend("/topic1",rideRepository.findAll());
+//    }
 
 }
