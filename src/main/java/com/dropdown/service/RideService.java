@@ -34,7 +34,7 @@ public class RideService {
     private final RideMapper rideMapper;
     private final ServiceProviderService serviceProviderService;
 
-    public boolean createRideRequest(RideRequestByCustomer request, String token) throws ServiceProviderException, UserException {
+    public String createRideRequest(RideRequestByCustomer request, String token) throws ServiceProviderException, UserException {
         if (request.serviceProviderId() == null) {
             throw new ServiceProviderException("ServiceProvider Id no found in request");
         }
@@ -51,7 +51,7 @@ public class RideService {
                         .user(User.builder()
                                 .id(user.getId())
                                 .build())
-                        .createdAt(LocalDateTime.now())
+                        .createdAt(LocalDateTime.now().plusMinutes(1))
                         .destinationLocation(request.destinationLocation())
                         .rideStatus(RideStatus.REQUESTED_BY_CUSTOMER)
                         .build()
@@ -60,7 +60,7 @@ public class RideService {
 
         // notification to specific service provider
         messagingTemplate.convertAndSend("/notification/"+serviceProvider.getId(),rideRequestToServiceProvider);
-        return true;
+        return save.getId();
     }
 
     public void acceptRide(RideAcceptRejectRequest request, String token) throws ServiceProviderException, RideException {
@@ -70,21 +70,16 @@ public class RideService {
         if (request.accept()) {
             if (serviceProvider.getRides().contains(ride)) {
                 rideRepository.updateRideStatus(request.rideId(), RideStatus.ACCEPTED_BY_DRIVER);
+                messagingTemplate.convertAndSend("/ride-update/"+ride.getUser().getId(), "Ride Accepted By Driver");
             }
+        }else{
+            messagingTemplate.convertAndSend("/ride-update/"+ride.getUser().getId(), "Ride Rejected By Driver");
         }
     }
 
-    public Boolean checkStatus(String rideId, String token) throws ServiceProviderException, RideException {
-        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new RideException("Ride Doesn't Exist by following id"));
-        if (ride.getRideStatus().equals(RideStatus.REQUESTED_BY_CUSTOMER)) {
-            rideRepository.deleteById(rideId);
-            return false;
-        }
-        return true;
+    @Scheduled(fixedRate = 60000)
+    public void delete(){
+        rideRepository.deleteRideByCreatedAtBefore(LocalDateTime.now());
     }
-//    @Scheduled(fixedRate = 3000)
-//    public void send(){
-//        messagingTemplate.convertAndSend("/topic1",rideRepository.findAll());
-//    }
 
 }

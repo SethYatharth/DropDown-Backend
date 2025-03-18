@@ -23,14 +23,14 @@ public class RideController {
     @PostMapping
     public ResponseEntity<BaseResponse> createRide(@RequestBody RideRequestByCustomer request, @RequestHeader("Authorization")String token) throws ServiceProviderException, UserException {
 
-        boolean rideRequest = rideService.createRideRequest(request,token);
-        if (rideRequest) {
+        String rideRequest = rideService.createRideRequest(request,token);
+        if (rideRequest!=null){
             return new ResponseEntity<>(BaseResponse.builder()
                     .response(true)
                     .responseMessage("Ride created successfully")
                     .build(),HttpStatus.CREATED);
         }
-        else {
+        else{
             return new ResponseEntity<>(BaseResponse.builder()
                     .response(false)
                     .responseMessage("Ride creation failed")
@@ -46,12 +46,6 @@ public class RideController {
                 .response(true)
                 .responseMessage("Ride accepted successfully")
                 .build(),HttpStatus.OK);
-    }
-
-
-    @GetMapping("/{rideId}")
-    public Boolean checkStatus(@PathVariable String rideId,@RequestHeader("Authorization") String token) throws ServiceProviderException, RideException {
-        return rideService.checkStatus(rideId,token);
     }
 
 }

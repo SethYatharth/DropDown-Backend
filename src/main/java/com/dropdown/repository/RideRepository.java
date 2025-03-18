@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
+
 
 public interface RideRepository extends JpaRepository<Ride, String> {
 
@@ -14,5 +16,9 @@ public interface RideRepository extends JpaRepository<Ride, String> {
     @Transactional
     @Query("update Ride r set r.rideStatus = :rideStatus where r.id = :id")
     void updateRideStatus(String id, RideStatus rideStatus);
+
+    @Modifying
+    @Transactional
+    void deleteRideByCreatedAtBefore(LocalDateTime createdAt);
 
 }

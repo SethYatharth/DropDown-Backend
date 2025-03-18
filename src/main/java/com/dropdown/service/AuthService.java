@@ -55,17 +55,17 @@ public class AuthService {
                     .password(passwordEncoder.encode(request.password()))
                     .phoneNo(request.phoneNo())
                     .role(Role.USER)
-                    .location(
-                            new GPSLocation(
-                                    request.latitude(),
-                                    request.longitude(),
-                                    h3UberGridService.getGridAddress(
-                                            new Coordinates(
-                                                    request.latitude(), request.longitude()
-                                            )
-                                    )
-                            )
-                    )
+//                    .location(
+//                            new GPSLocation(
+//                                    request.latitude(),
+//                                    request.longitude(),
+//                                    h3UberGridService.getGridAddress(
+//                                            new Coordinates(
+//                                                    request.latitude(), request.longitude()
+//                                            )
+//                                    )
+//                            )
+//                    )
                     .build();
             User user1 = userRepository.save(user);
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
@@ -81,17 +81,17 @@ public class AuthService {
                     .password(passwordEncoder.encode(request.password()))
                     .phoneNo(request.phoneNo())
                     .role(Role.SERVICE_PROVIDER)
-                    .location(
-                            new GPSLocation(
-                                    request.latitude(),
-                                    request.longitude(),
-                                    h3UberGridService.getGridAddress(
-                                            new Coordinates(
-                                                    request.latitude(), request.longitude()
-                                            )
-                                    )
-                            )
-                    )
+//                    .location(
+//                            new GPSLocation(
+//                                    request.latitude(),
+//                                    request.longitude(),
+//                                    h3UberGridService.getGridAddress(
+//                                            new Coordinates(
+//                                                    request.latitude(), request.longitude()
+//                                            )
+//                                    )
+//                            )
+//                    )
                     .build();
             ServiceProvider serviceProvider1 = serviceProviderRepository.save(serviceProvider);
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
@@ -113,43 +113,43 @@ public class AuthService {
         if (request.role().equals("User")) {
             User user = userRepository.findByEmailIgnoreCase(request.email()).orElseThrow(() -> new UserException("User Not Found with "+request.email()));
 
-            user.setLocation(
-                        new GPSLocation(
-                                request.latitude(),
-                                request.longitude(),
-                                h3UberGridService.getGridAddress(
-                                        new Coordinates(
-                                                request.latitude(),
-                                                request.longitude()
-                                        )
-                                )
-                        )
-                );
-            User user1 = userRepository.save(user);
+//            user.setLocation(
+//                        new GPSLocation(
+//                                request.latitude(),
+//                                request.longitude(),
+//                                h3UberGridService.getGridAddress(
+//                                        new Coordinates(
+//                                                request.latitude(),
+//                                                request.longitude()
+//                                        )
+//                                )
+//                        )
+//                );
+//            User user1 = userRepository.save(user);
 
             return BaseResponse.builder()
-                    .response(new AuthResponse(user1.getId(),jwtService.generateToken(user), jwtService.generateRefreshToken(user)))
+                    .response(new AuthResponse(user.getId(),jwtService.generateToken(user), jwtService.generateRefreshToken(user)))
                     .responseMessage(loginSuccess)
                     .build();
         } else if (request.role().equals("ServiceProvider")) {
             ServiceProvider serviceProvider = serviceProviderRepository.findByEmailIgnoreCase(request.email()).orElseThrow(() -> new ServiceProviderException("Service Provider Not Found with "+request.email()));
-                serviceProvider.setLocation(
-                        new GPSLocation(
-                                request.latitude(),
-                                request.longitude(),
-                                h3UberGridService.getGridAddress(
-                                        new Coordinates(
-                                                request.latitude(),
-                                                request.longitude()
-                                        )
-                                )
-                        )
-                );
-            ServiceProvider serviceProvider1 = serviceProviderRepository.save(serviceProvider);
+//                serviceProvider.setLocation(
+//                        new GPSLocation(
+//                                request.latitude(),
+//                                request.longitude(),
+//                                h3UberGridService.getGridAddress(
+//                                        new Coordinates(
+//                                                request.latitude(),
+//                                                request.longitude()
+//                                        )
+//                                )
+//                        )
+//                );
+//            ServiceProvider serviceProvider1 = serviceProviderRepository.save(serviceProvider);
 
             System.out.println(serviceProvider.getEmail());
             return BaseResponse.builder()
-                    .response(new AuthResponse(serviceProvider1.getId(),jwtService.generateToken(serviceProvider), jwtService.generateRefreshToken(serviceProvider)))
+                    .response(new AuthResponse(serviceProvider.getId(),jwtService.generateToken(serviceProvider), jwtService.generateRefreshToken(serviceProvider)))
                     .responseMessage(loginSuccess)
                     .build();
         } else {
