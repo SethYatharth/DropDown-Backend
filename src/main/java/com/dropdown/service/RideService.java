@@ -52,6 +52,7 @@ public class RideService {
                                 .id(user.getId())
                                 .build())
                         .createdAt(LocalDateTime.now().plusMinutes(1))
+                        .createdAt(LocalDateTime.now().plusMinutes(1))
                         .destinationLocation(request.destinationLocation())
                         .rideStatus(RideStatus.REQUESTED_BY_CUSTOMER)
                         .build()
@@ -77,9 +78,9 @@ public class RideService {
         }
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 60000*30)
     public void delete(){
-        rideRepository.deleteRideByCreatedAtBefore(LocalDateTime.now());
+        rideRepository.deleteByCreatedAtBeforeAndRideStatusNot(LocalDateTime.now(),RideStatus.ACCEPTED_BY_DRIVER);
     }
 
 }

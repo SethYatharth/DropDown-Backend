@@ -19,6 +19,7 @@ public interface RideRepository extends JpaRepository<Ride, String> {
 
     @Modifying
     @Transactional
-    void deleteRideByCreatedAtBefore(LocalDateTime createdAt);
+    void deleteByCreatedAtBeforeAndRideStatusNot(LocalDateTime createdAt, RideStatus rideStatus);
+
 
 }
